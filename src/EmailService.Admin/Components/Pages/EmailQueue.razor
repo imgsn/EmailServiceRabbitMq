@@ -1,0 +1,69 @@
+@page "/email-queue"
+@using EmailService.Application.Common.Interfaces
+@using EmailService.Domain.Enums
+@using Microsoft.EntityFrameworkCore
+@inject IApplicationDbContext DbContext
+
+<PageTitle>Email Queue</PageTitle>
+
+<h1>Email Queue</h1>
+
+<div class="mt-4">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Created</th>
+                <th>Tenant</th>
+                <th>To Email</th>
+                <th>Subject</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Scheduled</th>
+                <th>Retries</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var email in emailQueue)
+            {
+                <tr>
+                    <td>@email.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@email.Tenant?.Name</td>
+                    <td>@email.ToEmail</td>
+                    <td>@(email.Subject.Length > 50 ? email.Subject.Substring(0, 50) + "..." : email.Subject)</td>
+                    <td>
+                        <span class="badge bg-@GetStatusColor(email.Status)">@email.Status</span>
+                    </td>
+                    <td>@email.Priority</td>
+                    <td>@(email.ScheduledAt?.ToLocalTime().ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                    <td>@email.RetryCount / @email.MaxRetries</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private List<EmailService.Domain.Entities.EmailQueue> emailQueue = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        emailQueue = await DbContext.EmailQueues
+            .Include(e => e.Tenant)
+            .OrderByDescending(e => e.CreatedAt)
+            .Take(100)
+            .ToListAsync();
+    }
+
+    private string GetStatusColor(EmailStatus status)
+    {
+        return status switch
+        {
+            EmailStatus.Sent => "success",
+            EmailStatus.Failed => "danger",
+            EmailStatus.Pending => "warning",
+            EmailStatus.Processing => "info",
+            EmailStatus.Cancelled => "secondary",
+            _ => "secondary"
+        };
+    }
+}

@@ -1,0 +1,50 @@
+@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <h4 style="color: white; margin: 0;">📧 Email Service</h4>
+            <small style="color: rgba(255,255,255,0.6);">Admin Dashboard</small>
+        </div>
+        <nav class="flex-column">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="tenants">
+                    <i class="bi bi-people"></i> Tenants
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="email-queue">
+                    <i class="bi bi-envelope"></i> Email Queue
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="email-logs">
+                    <i class="bi bi-list-check"></i> Email Logs
+                </NavLink>
+            </div>
+        </nav>
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <h3>Email Service Admin</h3>
+            <small class="text-muted">Monitor and manage your email service</small>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<style>
+    .nav-link i {
+        margin-right: 8px;
+        font-size: 1.1em;
+    }
+</style>

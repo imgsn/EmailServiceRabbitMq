@@ -1,0 +1,291 @@
+{
+  "info": {
+    "name": "Email Service API",
+    "description": "Collection for testing Email Service API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "test-api-key-12345",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Send Single Email",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"toEmail\": \"recipient@example.com\",\n  \"toName\": \"John Doe\",\n  \"subject\": \"Test Email\",\n  \"body\": \"<h1>Hello!</h1><p>This is a test email from Email Service API.</p>\",\n  \"isHtml\": true,\n  \"priority\": 1\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/email/send?sendImmediately=false",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "email", "send"],
+          "query": [
+            {
+              "key": "sendImmediately",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send Single Email (Immediate)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"toEmail\": \"recipient@example.com\",\n  \"toName\": \"Jane Smith\",\n  \"subject\": \"Urgent Test Email\",\n  \"body\": \"<h1>Urgent!</h1><p>This email is sent immediately.</p>\",\n  \"isHtml\": true,\n  \"priority\": 3\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/email/send?sendImmediately=true",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "email", "send"],
+          "query": [
+            {
+              "key": "sendImmediately",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send Template Email",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"templateId\": \"YOUR-TEMPLATE-ID-HERE\",\n  \"toEmail\": \"recipient@example.com\",\n  \"toName\": \"John Doe\",\n  \"templateData\": {\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"verificationCode\": \"123456\"\n  },\n  \"priority\": 1\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/email/send-template?sendImmediately=false",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "email", "send-template"],
+          "query": [
+            {
+              "key": "sendImmediately",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send Bulk Emails",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"emails\": [\n    {\n      \"toEmail\": \"recipient1@example.com\",\n      \"subject\": \"Bulk Email 1\",\n      \"body\": \"<h1>Hello Recipient 1!</h1>\",\n      \"isHtml\": true,\n      \"priority\": 1\n    },\n    {\n      \"toEmail\": \"recipient2@example.com\",\n      \"subject\": \"Bulk Email 2\",\n      \"body\": \"<h1>Hello Recipient 2!</h1>\",\n      \"isHtml\": true,\n      \"priority\": 1\n    },\n    {\n      \"toEmail\": \"recipient3@example.com\",\n      \"subject\": \"Bulk Email 3\",\n      \"body\": \"<h1>Hello Recipient 3!</h1>\",\n      \"isHtml\": true,\n      \"priority\": 1\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/email/send-bulk?sendImmediately=false",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "email", "send-bulk"],
+          "query": [
+            {
+              "key": "sendImmediately",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send Bulk Template Emails",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"templateId\": \"YOUR-TEMPLATE-ID-HERE\",\n  \"recipients\": [\n    {\n      \"toEmail\": \"user1@example.com\",\n      \"toName\": \"User One\",\n      \"templateData\": {\n        \"firstName\": \"User\",\n        \"lastName\": \"One\",\n        \"verificationCode\": \"111111\"\n      }\n    },\n    {\n      \"toEmail\": \"user2@example.com\",\n      \"toName\": \"User Two\",\n      \"templateData\": {\n        \"firstName\": \"User\",\n        \"lastName\": \"Two\",\n        \"verificationCode\": \"222222\"\n      }\n    },\n    {\n      \"toEmail\": \"user3@example.com\",\n      \"toName\": \"User Three\",\n      \"templateData\": {\n        \"firstName\": \"User\",\n        \"lastName\": \"Three\",\n        \"verificationCode\": \"333333\"\n      }\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/email/send-bulk-template?sendImmediately=false",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "email", "send-bulk-template"],
+          "query": [
+            {
+              "key": "sendImmediately",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Email Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/email/YOUR-EMAIL-ID-HERE",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "email", "YOUR-EMAIL-ID-HERE"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send Email with CC and BCC",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"toEmail\": \"recipient@example.com\",\n  \"toName\": \"Primary Recipient\",\n  \"subject\": \"Email with CC and BCC\",\n  \"body\": \"<h1>Test Email</h1><p>This email has CC and BCC recipients.</p>\",\n  \"isHtml\": true,\n  \"ccEmails\": [\"cc1@example.com\", \"cc2@example.com\"],\n  \"bccEmails\": [\"bcc1@example.com\"],\n  \"priority\": 1\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/email/send?sendImmediately=false",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "email", "send"],
+          "query": [
+            {
+              "key": "sendImmediately",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send Scheduled Email",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"toEmail\": \"recipient@example.com\",\n  \"subject\": \"Scheduled Email\",\n  \"body\": \"<h1>Scheduled!</h1><p>This email was scheduled for future delivery.</p>\",\n  \"isHtml\": true,\n  \"scheduledAt\": \"2025-12-31T23:59:59Z\",\n  \"priority\": 2\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/email/send?sendImmediately=false",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "email", "send"],
+          "query": [
+            {
+              "key": "sendImmediately",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

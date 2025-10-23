@@ -1,0 +1,113 @@
+@page "/"
+@using EmailService.Application.Common.Interfaces
+@using EmailService.Domain.Enums
+@using Microsoft.EntityFrameworkCore
+@inject IApplicationDbContext DbContext
+
+<PageTitle>Dashboard</PageTitle>
+
+<h1>Email Service Dashboard</h1>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Tenants</h5>
+                <h2>@totalTenants</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Pending Emails</h5>
+                <h2>@pendingEmails</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Sent Today</h5>
+                <h2>@sentToday</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-danger mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Failed Today</h5>
+                <h2>@failedToday</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h3>Recent Activity</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Tenant</th>
+                    <th>To Email</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in recentLogs)
+                {
+                    <tr>
+                        <td>@log.CreatedAt.ToLocalTime().ToString("HH:mm:ss")</td>
+                        <td>@log.Tenant?.Name</td>
+                        <td>@log.ToEmail</td>
+                        <td>@log.Subject</td>
+                        <td>
+                            <span class="badge bg-@GetStatusColor(log.Status)">@log.Status</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private int totalTenants;
+    private int pendingEmails;
+    private int sentToday;
+    private int failedToday;
+    private List<EmailService.Domain.Entities.EmailLog> recentLogs = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var today = DateTime.UtcNow.Date;
+
+        totalTenants = await DbContext.Tenants.CountAsync(t => t.IsActive);
+        pendingEmails = await DbContext.EmailQueues.CountAsync(e => e.Status == EmailStatus.Pending);
+        sentToday = await DbContext.EmailLogs
+            .CountAsync(e => e.Status == EmailStatus.Sent && e.CreatedAt >= today);
+        failedToday = await DbContext.EmailLogs
+            .CountAsync(e => e.Status == EmailStatus.Failed && e.CreatedAt >= today);
+
+        recentLogs = await DbContext.EmailLogs
+            .Include(e => e.Tenant)
+            .OrderByDescending(e => e.CreatedAt)
+            .Take(10)
+            .ToListAsync();
+    }
+
+    private string GetStatusColor(EmailStatus status)
+    {
+        return status switch
+        {
+            EmailStatus.Sent => "success",
+            EmailStatus.Failed => "danger",
+            EmailStatus.Pending => "warning",
+            EmailStatus.Processing => "info",
+            _ => "secondary"
+        };
+    }
+}

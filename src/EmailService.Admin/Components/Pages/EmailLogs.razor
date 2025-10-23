@@ -1,0 +1,68 @@
+@page "/email-logs"
+@using EmailService.Application.Common.Interfaces
+@using EmailService.Domain.Enums
+@using Microsoft.EntityFrameworkCore
+@inject IApplicationDbContext DbContext
+
+<PageTitle>Email Logs</PageTitle>
+
+<h1>Email Logs</h1>
+
+<div class="mt-4">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Tenant</th>
+                <th>To Email</th>
+                <th>Subject</th>
+                <th>Status</th>
+                <th>Processing Time</th>
+                <th>Retries</th>
+                <th>Error</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in emailLogs)
+            {
+                <tr>
+                    <td>@log.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@log.Tenant?.Name</td>
+                    <td>@log.ToEmail</td>
+                    <td>@(log.Subject.Length > 40 ? log.Subject.Substring(0, 40) + "..." : log.Subject)</td>
+                    <td>
+                        <span class="badge bg-@GetStatusColor(log.Status)">@log.Status</span>
+                    </td>
+                    <td>@(log.ProcessingTime.HasValue ? $"{log.ProcessingTime.Value.TotalMilliseconds:F0}ms" : "-")</td>
+                    <td>@log.RetryCount</td>
+                    <td>@(string.IsNullOrEmpty(log.ErrorMessage) ? "-" : (log.ErrorMessage.Length > 30 ? log.ErrorMessage.Substring(0, 30) + "..." : log.ErrorMessage))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private List<EmailService.Domain.Entities.EmailLog> emailLogs = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        emailLogs = await DbContext.EmailLogs
+            .Include(e => e.Tenant)
+            .OrderByDescending(e => e.CreatedAt)
+            .Take(100)
+            .ToListAsync();
+    }
+
+    private string GetStatusColor(EmailStatus status)
+    {
+        return status switch
+        {
+            EmailStatus.Sent => "success",
+            EmailStatus.Failed => "danger",
+            EmailStatus.Pending => "warning",
+            EmailStatus.Processing => "info",
+            _ => "secondary"
+        };
+    }
+}

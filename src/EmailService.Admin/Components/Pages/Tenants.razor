@@ -1,0 +1,51 @@
+@page "/tenants"
+@using EmailService.Application.Common.Interfaces
+@using Microsoft.EntityFrameworkCore
+@inject IApplicationDbContext DbContext
+
+<PageTitle>Tenants</PageTitle>
+
+<h1>Tenants</h1>
+
+<div class="mt-4">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>API Key</th>
+                <th>Contact Email</th>
+                <th>Active</th>
+                <th>Daily Limit</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tenant in tenants)
+            {
+                <tr>
+                    <td>@tenant.Name</td>
+                    <td><code>@tenant.ApiKey</code></td>
+                    <td>@tenant.ContactEmail</td>
+                    <td>
+                        <span class="badge bg-@(tenant.IsActive ? "success" : "danger")">
+                            @(tenant.IsActive ? "Active" : "Inactive")
+                        </span>
+                    </td>
+                    <td>@tenant.DailyEmailLimit</td>
+                    <td>@tenant.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private List<EmailService.Domain.Entities.Tenant> tenants = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        tenants = await DbContext.Tenants
+            .OrderBy(t => t.Name)
+            .ToListAsync();
+    }
+}
