@@ -1,14 +1,11 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8F8F3E9C-9D3E-4F0A-8E5A-1B2C3D4E5F6A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9F9F3E9C-9D3E-4F0A-8E5A-1B2C3D4E5F6B}"
 EndProject
-
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.Domain", "src\EmailService.Domain\EmailService.Domain.csproj", "{A1A1A1A1-A1A1-A1A1-A1A1-A1A1A1A1A1A1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.Application", "src\EmailService.Application\EmailService.Application.csproj", "{B2B2B2B2-B2B2-B2B2-B2B2-B2B2B2B2B2B2}"
@@ -23,7 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.Admin", "src\E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.TestClient", "tests\EmailService.TestClient\EmailService.TestClient.csproj", "{A7A7A7A7-A7A7-A7A7-A7A7-A7A7A7A7A7A7}"
 EndProject
-
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.RabbitMQTestClient", "tests\EmailService.RabbitMQTestClient\EmailService.RabbitMQTestClient.csproj", "{35B2C904-EAC2-427D-A7E6-F0A2C4842FEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +56,13 @@ Global
 		{A7A7A7A7-A7A7-A7A7-A7A7-A7A7A7A7A7A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7A7A7A7-A7A7-A7A7-A7A7-A7A7A7A7A7A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7A7A7A7-A7A7-A7A7-A7A7-A7A7A7A7A7A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35B2C904-EAC2-427D-A7E6-F0A2C4842FEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35B2C904-EAC2-427D-A7E6-F0A2C4842FEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35B2C904-EAC2-427D-A7E6-F0A2C4842FEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35B2C904-EAC2-427D-A7E6-F0A2C4842FEB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A1A1A1A1-A1A1-A1A1-A1A1-A1A1A1A1A1A1} = {8F8F3E9C-9D3E-4F0A-8E5A-1B2C3D4E5F6A}
@@ -67,5 +72,9 @@ Global
 		{E5E5E5E5-E5E5-E5E5-E5E5-E5E5E5E5E5E5} = {8F8F3E9C-9D3E-4F0A-8E5A-1B2C3D4E5F6A}
 		{F6F6F6F6-F6F6-F6F6-F6F6-F6F6F6F6F6F6} = {8F8F3E9C-9D3E-4F0A-8E5A-1B2C3D4E5F6A}
 		{A7A7A7A7-A7A7-A7A7-A7A7-A7A7A7A7A7A7} = {9F9F3E9C-9D3E-4F0A-8E5A-1B2C3D4E5F6B}
+		{35B2C904-EAC2-427D-A7E6-F0A2C4842FEB} = {9F9F3E9C-9D3E-4F0A-8E5A-1B2C3D4E5F6B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {45A90509-83FF-402B-8A50-7EBC9C4739C7}
 	EndGlobalSection
 EndGlobal
