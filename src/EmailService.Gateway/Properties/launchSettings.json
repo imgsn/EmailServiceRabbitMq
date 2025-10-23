@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "EmailService.Gateway": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:62163;http://localhost:62164"
+    }
+  }
+}

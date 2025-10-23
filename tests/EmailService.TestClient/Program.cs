@@ -7,8 +7,8 @@ namespace EmailService.TestClient;
 class Program
 {
     private static readonly HttpClient _httpClient = new();
-    private const string BaseUrl = "http://localhost:5000";
-    private const string ApiKey = "your-test-api-key-here"; // Replace with actual tenant API key
+    private const string BaseUrl = "http://localhost:52563";
+    private const string ApiKey = "test-api-key-12345"; // Replace with actual tenant API key
 
     static async Task Main(string[] args)
     {
@@ -72,16 +72,16 @@ class Program
     static async Task SendSingleEmail()
     {
         Console.WriteLine("\n--- Send Single Email ---");
-        
+
         Console.Write("To Email: ");
         var toEmail = Console.ReadLine();
-        
+
         Console.Write("Subject: ");
         var subject = Console.ReadLine();
-        
+
         Console.Write("Body: ");
         var body = Console.ReadLine();
-        
+
         Console.Write("Send Immediately? (y/n): ");
         var sendImmediately = Console.ReadLine()?.ToLower() == "y";
 
@@ -107,13 +107,13 @@ class Program
     static async Task SendTemplateEmail()
     {
         Console.WriteLine("\n--- Send Template Email ---");
-        
+
         Console.Write("Template ID (GUID): ");
         var templateId = Console.ReadLine();
-        
+
         Console.Write("To Email: ");
         var toEmail = Console.ReadLine();
-        
+
         Console.Write("Send Immediately? (y/n): ");
         var sendImmediately = Console.ReadLine()?.ToLower() == "y";
 
@@ -142,10 +142,10 @@ class Program
     static async Task SendBulkEmails()
     {
         Console.WriteLine("\n--- Send Bulk Emails ---");
-        
+
         Console.Write("Number of emails to send: ");
         var count = int.Parse(Console.ReadLine() ?? "1");
-        
+
         Console.Write("Send Immediately? (y/n): ");
         var sendImmediately = Console.ReadLine()?.ToLower() == "y";
 
@@ -177,13 +177,13 @@ class Program
     static async Task SendBulkTemplateEmails()
     {
         Console.WriteLine("\n--- Send Bulk Template Emails ---");
-        
+
         Console.Write("Template ID (GUID): ");
         var templateId = Console.ReadLine();
-        
+
         Console.Write("Number of recipients: ");
         var count = int.Parse(Console.ReadLine() ?? "1");
-        
+
         Console.Write("Send Immediately? (y/n): ");
         var sendImmediately = Console.ReadLine()?.ToLower() == "y";
 
@@ -221,7 +221,7 @@ class Program
     static async Task GetEmailStatus()
     {
         Console.WriteLine("\n--- Get Email Status ---");
-        
+
         Console.Write("Email ID (GUID): ");
         var emailId = Console.ReadLine();
 

@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.TestClient", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.RabbitMQTestClient", "tests\EmailService.RabbitMQTestClient\EmailService.RabbitMQTestClient.csproj", "{35B2C904-EAC2-427D-A7E6-F0A2C4842FEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.Gateway", "src\EmailService.Gateway\EmailService.Gateway.csproj", "{A9DA91DA-BA94-46A2-A1EC-BEAF993D7E1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +62,10 @@ Global
 		{35B2C904-EAC2-427D-A7E6-F0A2C4842FEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35B2C904-EAC2-427D-A7E6-F0A2C4842FEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35B2C904-EAC2-427D-A7E6-F0A2C4842FEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9DA91DA-BA94-46A2-A1EC-BEAF993D7E1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9DA91DA-BA94-46A2-A1EC-BEAF993D7E1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9DA91DA-BA94-46A2-A1EC-BEAF993D7E1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9DA91DA-BA94-46A2-A1EC-BEAF993D7E1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +79,7 @@ Global
 		{F6F6F6F6-F6F6-F6F6-F6F6-F6F6F6F6F6F6} = {8F8F3E9C-9D3E-4F0A-8E5A-1B2C3D4E5F6A}
 		{A7A7A7A7-A7A7-A7A7-A7A7-A7A7A7A7A7A7} = {9F9F3E9C-9D3E-4F0A-8E5A-1B2C3D4E5F6B}
 		{35B2C904-EAC2-427D-A7E6-F0A2C4842FEB} = {9F9F3E9C-9D3E-4F0A-8E5A-1B2C3D4E5F6B}
+		{A9DA91DA-BA94-46A2-A1EC-BEAF993D7E1F} = {8F8F3E9C-9D3E-4F0A-8E5A-1B2C3D4E5F6A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {45A90509-83FF-402B-8A50-7EBC9C4739C7}

@@ -1,0 +1,195 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/email/send",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/email/send",
+      "UpstreamHttpMethod": [ "POST" ],
+      "Key": "send-email",
+      "Priority": 1,
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 50
+      },
+      "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 3,
+        "DurationOfBreak": 10000,
+        "TimeoutValue": 30000
+      },
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 30,
+        "Region": "email-send"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/email/send/template",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/email/send/template",
+      "UpstreamHttpMethod": [ "POST" ],
+      "Key": "send-template-email",
+      "Priority": 1,
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 30
+      },
+      "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 3,
+        "DurationOfBreak": 10000,
+        "TimeoutValue": 30000
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/email/send/bulk",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/email/send/bulk",
+      "UpstreamHttpMethod": [ "POST" ],
+      "Key": "send-bulk-email",
+      "Priority": 1,
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5m",
+        "PeriodTimespan": 300,
+        "Limit": 10
+      },
+      "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 2,
+        "DurationOfBreak": 15000,
+        "TimeoutValue": 60000
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/email/status/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/email/status/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "email-status",
+      "Priority": 1,
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 200
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 10,
+        "Region": "email-status"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/health",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/health/api",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "api-health",
+      "Priority": 1
+    },
+    {
+      "DownstreamPathTemplate": "/api/health/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/health/detailed/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "api-health-detailed",
+      "Priority": 2
+    },
+    {
+      "DownstreamPathTemplate": "/swagger/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/docs/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "swagger-docs",
+      "Priority": 1
+    }
+  ],
+  "Aggregates": [
+    {
+      "RouteKeys": [
+        "api-health",
+        "email-status"
+      ],
+      "UpstreamPathTemplate": "/aggregated/health-and-status/{id}",
+      "Aggregator": "StatusAggregator"
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:8080",
+    "ServiceDiscoveryProvider": {
+      "Type": "Consul",
+      "Host": "localhost",
+      "Port": 8500
+    },
+    "RateLimitOptions": {
+      "DisableRateLimitHeaders": false,
+      "QuotaExceededMessage": "Rate limit exceeded. Please retry after {0} seconds.",
+      "HttpStatusCode": 429,
+      "ClientIdHeader": "X-Client-Id"
+    },
+    "QoSOptions": {
+      "ExceptionsAllowedBeforeBreaking": 3,
+      "DurationOfBreak": 10000,
+      "TimeoutValue": 30000
+    },
+    "LoadBalancerOptions": {
+      "Type": "LeastConnection",
+      "Key": "email-service",
+      "Expiry": 300000
+    },
+    "HttpHandlerOptions": {
+      "AllowAutoRedirect": false,
+      "UseCookieContainer": false,
+      "UseTracing": true
+    }
+  }
+}
