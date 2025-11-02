@@ -58,7 +58,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             entity.HasOne(e => e.Tenant)
                 .WithMany(t => t.EmailQueues)
                 .HasForeignKey(e => e.TenantId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(e => e.Template)
                 .WithMany()
                 .HasForeignKey(e => e.TemplateId)
@@ -77,7 +77,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             entity.HasOne(e => e.Tenant)
                 .WithMany(t => t.EmailLogs)
                 .HasForeignKey(e => e.TenantId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(e => e.Queue)
                 .WithMany()
                 .HasForeignKey(e => e.QueueId)
