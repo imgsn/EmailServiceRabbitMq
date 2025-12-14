@@ -5,7 +5,8 @@
       "Bash(dotnet add:*)",
       "Bash(dotnet remove:*)",
       "Bash(dotnet ef database update:*)",
-      "Bash(dotnet ef migrations remove:*)"
+      "Bash(dotnet ef migrations remove:*)",
+      "Bash(dotnet build:*)"
     ],
     "deny": [],
     "ask": []
