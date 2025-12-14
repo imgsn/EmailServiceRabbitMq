@@ -1,11 +1,119 @@
 @page "/tenants"
+@rendermode InteractiveServer
 @using EmailService.Application.Common.Interfaces
+@using EmailService.Domain.Entities
 @using Microsoft.EntityFrameworkCore
 @inject IApplicationDbContext DbContext
 
 <PageTitle>Tenants</PageTitle>
 
-<h1>Tenants</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Tenants</h1>
+    <button class="btn btn-primary" @onclick="ShowAddTenantModal">
+        <i class="bi bi-plus-circle"></i> Add Tenant
+    </button>
+</div>
+
+@if (showAddModal)
+{
+    <div class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5); display: block !important;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Tenant</h5>
+                    <button type="button" class="btn-close" @onclick="CloseAddTenantModal"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@newTenant" OnValidSubmit="@HandleAddTenant">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Name *</label>
+                                <InputText class="form-control" @bind-Value="newTenant.Name" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Contact Email</label>
+                                <InputText class="form-control" @bind-Value="newTenant.ContactEmail" type="email" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Daily Email Limit</label>
+                                <InputNumber class="form-control" @bind-Value="newTenant.DailyEmailLimit" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Hourly Email Limit</label>
+                                <InputNumber class="form-control" @bind-Value="newTenant.HourlyEmailLimit" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <InputCheckbox class="form-check-input" @bind-Value="newTenant.IsActive" id="isActive" />
+                                <label class="form-check-label" for="isActive">
+                                    Active
+                                </label>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h6>SMTP Configuration (Optional)</h6>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">SMTP Host</label>
+                                <InputText class="form-control" @bind-Value="newTenant.SmtpHost" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">SMTP Port</label>
+                                <InputNumber class="form-control" @bind-Value="newTenant.SmtpPort" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">SMTP Username</label>
+                                <InputText class="form-control" @bind-Value="newTenant.SmtpUsername" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">SMTP Password</label>
+                                <InputText class="form-control" @bind-Value="newTenant.SmtpPassword" type="password" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">From Email</label>
+                                <InputText class="form-control" @bind-Value="newTenant.FromEmail" type="email" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">From Name</label>
+                                <InputText class="form-control" @bind-Value="newTenant.FromName" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <InputCheckbox class="form-check-input" @bind-Value="smtpEnableSsl" id="enableSsl" />
+                                <label class="form-check-label" for="enableSsl">
+                                    Enable SSL
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @onclick="CloseAddTenantModal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Tenant</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 <div class="mt-4">
     <table class="table table-striped">
@@ -39,13 +147,82 @@
     </table>
 </div>
 
+<style>
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1050;
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        outline: 0;
+    }
+
+    .modal.d-block {
+        display: block !important;
+    }
+
+    .modal-dialog {
+        position: relative;
+        width: auto;
+        margin: 1.75rem auto;
+        pointer-events: none;
+    }
+
+    .modal-content {
+        pointer-events: auto;
+    }
+</style>
+
 @code {
-    private List<EmailService.Domain.Entities.Tenant> tenants = new();
+    private List<Tenant> tenants = new();
+    private Tenant newTenant = new();
+    private bool showAddModal = false;
+    private bool smtpEnableSsl = true;
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadTenants();
+    }
+
+    private async Task LoadTenants()
     {
         tenants = await DbContext.Tenants
             .OrderBy(t => t.Name)
             .ToListAsync();
+    }
+
+    private void ShowAddTenantModal()
+    {
+        newTenant = new Tenant
+        {
+            IsActive = true,
+            DailyEmailLimit = 1000,
+            HourlyEmailLimit = 100
+        };
+        smtpEnableSsl = true;
+        showAddModal = true;
+    }
+
+    private void CloseAddTenantModal()
+    {
+        showAddModal = false;
+        newTenant = new();
+        smtpEnableSsl = true;
+    }
+
+    private async Task HandleAddTenant()
+    {
+        newTenant.ApiKey = Guid.NewGuid().ToString("N");
+        newTenant.CreatedAt = DateTime.UtcNow;
+        newTenant.SmtpEnableSsl = smtpEnableSsl;
+
+        DbContext.Tenants.Add(newTenant);
+        await DbContext.SaveChangesAsync(CancellationToken.None);
+
+        await LoadTenants();
+        CloseAddTenantModal();
     }
 }
