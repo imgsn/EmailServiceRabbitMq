@@ -1,25 +1,29 @@
 version: '3.8'
 
 services:
+  # SQL Server Database
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: emailservice-sqlserver
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Password123
-      - MSSQL_PID=Express
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Developer
     ports:
       - "1433:1433"
     volumes:
       - sqlserver-data:/var/opt/mssql
+      - ./docker-volumes/sqlserver-logs:/var/opt/mssql/log
     networks:
       - emailservice-network
     healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Password123 -Q "SELECT 1"
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q "SELECT 1" || exit 1
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
+  # RabbitMQ Message Broker
   rabbitmq:
     image: rabbitmq:3-management
     container_name: emailservice-rabbitmq
@@ -31,73 +35,121 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
+      - ./docker-volumes/rabbitmq-logs:/var/log/rabbitmq
     networks:
       - emailservice-network
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
+  # EmailService.API
   api:
     build:
       context: .
       dockerfile: src/EmailService.API/Dockerfile
     container_name: emailservice-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=EmailServiceDb;User Id=sa;Password=YourStrong@Password123;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=EmailDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
       - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=5672
       - RabbitMQ__UserName=admin
       - RabbitMQ__Password=admin123
+      - RabbitMQ__VirtualHost=/
+      - EmailSettings__SmtpHost=mail5010.site4now.net
+      - EmailSettings__SmtpPort=8889
+      - EmailSettings__SmtpUsername=noreply@imgsna.net
+      - EmailSettings__SmtpPassword=MGSN_Mail_010
+      - EmailSettings__EnableSsl=false
+      - EmailSettings__FromEmail=noreply@imgsna.net
+      - EmailSettings__FromName=Email Service
     ports:
-      - "5000:80"
+      - "7100:80"
+    volumes:
+      - ./docker-volumes/api-logs:/app/logs
+    networks:
+      - emailservice-network
     depends_on:
       sqlserver:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    networks:
-      - emailservice-network
     restart: unless-stopped
 
-  worker:
-    build:
-      context: .
-      dockerfile: src/EmailService.Worker/Dockerfile
-    container_name: emailservice-worker
-    environment:
-      - DOTNET_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=EmailServiceDb;User Id=sa;Password=YourStrong@Password123;TrustServerCertificate=True;MultipleActiveResultSets=true
-      - RabbitMQ__HostName=rabbitmq
-      - RabbitMQ__UserName=admin
-      - RabbitMQ__Password=admin123
-    depends_on:
-      sqlserver:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    networks:
-      - emailservice-network
-    restart: unless-stopped
-
+  # EmailService.Admin
   admin:
     build:
       context: .
       dockerfile: src/EmailService.Admin/Dockerfile
     container_name: emailservice-admin
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=EmailServiceDb;User Id=sa;Password=YourStrong@Password123;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=EmailDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
     ports:
-      - "5001:80"
+      - "7101:80"
+    volumes:
+      - ./docker-volumes/admin-logs:/app/logs
+    networks:
+      - emailservice-network
     depends_on:
       sqlserver:
         condition: service_healthy
+    restart: unless-stopped
+
+  # EmailService.Gateway
+  gateway:
+    build:
+      context: .
+      dockerfile: src/EmailService.Gateway/Dockerfile
+    container_name: emailservice-gateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "7102:80"
+    volumes:
+      - ./docker-volumes/gateway-logs:/app/logs
     networks:
       - emailservice-network
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # EmailService.Worker
+  worker:
+    build:
+      context: .
+      dockerfile: src/EmailService.Worker/Dockerfile
+    container_name: emailservice-worker
+    environment:
+      - DOTNET_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=EmailDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=admin
+      - RabbitMQ__Password=admin123
+      - RabbitMQ__VirtualHost=/
+      - EmailSettings__SmtpHost=mail5010.site4now.net
+      - EmailSettings__SmtpPort=8889
+      - EmailSettings__SmtpUsername=noreply@imgsna.net
+      - EmailSettings__SmtpPassword=MGSN_Mail_010
+      - EmailSettings__EnableSsl=false
+      - EmailSettings__FromEmail=noreply@imgsna.net
+      - EmailSettings__FromName=Email Service
+    volumes:
+      - ./docker-volumes/worker-logs:/app/logs
+    networks:
+      - emailservice-network
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     restart: unless-stopped
 
 networks:
@@ -106,4 +158,6 @@ networks:
 
 volumes:
   sqlserver-data:
+    driver: local
   rabbitmq-data:
+    driver: local

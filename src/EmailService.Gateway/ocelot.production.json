@@ -6,12 +6,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5000
-        },
-        {
-          "Host": "localhost",
-          "Port": 5002
+          "Host": "api",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/email/send",
@@ -42,12 +38,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5000
-        },
-        {
-          "Host": "localhost",
-          "Port": 5002
+          "Host": "api",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/email/send/template",
@@ -74,8 +66,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5000
+          "Host": "api",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/email/send/bulk",
@@ -99,12 +91,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5000
-        },
-        {
-          "Host": "localhost",
-          "Port": 5002
+          "Host": "api",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/email/status/{id}",
@@ -130,8 +118,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5000
+          "Host": "api",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/health/api",
@@ -148,8 +136,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5000
+          "Host": "api",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/health/api/detailed",
@@ -162,8 +150,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5000
+          "Host": "api",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/docs/{everything}",
@@ -176,8 +164,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5001
+          "Host": "admin",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/admin/{everything}",
@@ -196,7 +184,7 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:8080",
+    "BaseUrl": "http://gateway:80",
     "RateLimitOptions": {
       "DisableRateLimitHeaders": false,
       "QuotaExceededMessage": "API rate limit exceeded. Please wait {0} seconds before retrying.",
