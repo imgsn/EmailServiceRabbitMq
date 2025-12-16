@@ -6,7 +6,8 @@
       "Bash(dotnet remove:*)",
       "Bash(dotnet ef database update:*)",
       "Bash(dotnet ef migrations remove:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(docker-compose config:*)"
     ],
     "deny": [],
     "ask": []
